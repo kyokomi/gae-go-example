@@ -10,7 +10,23 @@ import (
 func init() {
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/logout", doLogoutHandler)
+	http.HandleFunc("/hello", root)
 }
+
+func root(w http.ResponseWriter, _ *http.Request) {
+	fmt.Fprint(w, guestBookForm)
+}
+
+const guestBookForm = `
+<html>
+  <body>
+    <form action="/sign" method="post">
+      <div><textarea name="content" rows="3" cols="60"></textarea></div>
+      <div><input type="submit" value="Sign Guestbook"></div>
+    </form>
+  </body>
+</html>
+`
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
