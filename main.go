@@ -1,34 +1,111 @@
 package gaehoge
 
 import (
-	"fmt"
+	"html/template"
 	"net/http"
+	"time"
+
 	"appengine"
+	"appengine/datastore"
 	"appengine/user"
 )
 
-func init() {
-	http.HandleFunc("/", handler)
-	http.HandleFunc("/logout", doLogoutHandler)
-	http.HandleFunc("/hello", root)
+type Greeting struct {
+	Author  string
+	Content string
+	Date    time.Time
 }
 
-func root(w http.ResponseWriter, _ *http.Request) {
-	fmt.Fprint(w, guestBookForm)
-}
-
-const guestBookForm = `
+var guestBookTemplate = template.Must(template.New("book").Parse(`
 <html>
+  <head>
+    <title>Go Guestbook</title>
+  </head>
   <body>
+    {{range .Greetings}}
+      {{with .Author}}
+        <p><b>{{.}}</b> wrote:</p>
+      {{else}}
+        <p>An anonymous person wrote:</p>
+      {{end}}
+      <pre>{{.Content}}</pre>
+    {{end}}
     <form action="/sign" method="post">
       <div><textarea name="content" rows="3" cols="60"></textarea></div>
       <div><input type="submit" value="Sign Guestbook"></div>
     </form>
+
+    Author: {{.Author}} <br />
+    {{with .Author}}
+    	<a href="/logout"><button>logout</button></a>
+	{{else}}
+		<a href="/login"><button>login</button></a>
+	{{end}}
   </body>
 </html>
-`
+`))
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func init() {
+	http.HandleFunc("/", doRoot)
+	http.HandleFunc("/sign", doSign)
+
+	http.HandleFunc("/login", doLoginHandler)
+	http.HandleFunc("/logout", doLogoutHandler)
+}
+
+func guestBookKey(c appengine.Context) *datastore.Key {
+	return datastore.NewKey(c, "Guestbook", "defualt_guestbook", 0, nil)
+}
+
+func doRoot(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+
+	q := datastore.NewQuery("Greeting").Ancestor(guestBookKey(c)).Order("-Date").Limit(10)
+	greetings := make([]Greeting, 0, 10)
+	if _, err := q.GetAll(c, &greetings); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	type Exec struct {
+		Author    string
+		Greetings []Greeting
+	}
+	e := Exec{
+		Greetings: greetings,
+	}
+	if u := user.Current(c); u != nil {
+		e.Author = u.String()
+	}
+
+	if err := guestBookTemplate.Execute(w, e); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func doSign(w http.ResponseWriter, r *http.Request) {
+
+	c := appengine.NewContext(r)
+	g := Greeting{
+		Content: r.FormValue("content"),
+		Date:    time.Now(),
+	}
+
+	if u := user.Current(c); u != nil {
+		g.Author = u.String()
+	}
+
+	key := datastore.NewIncompleteKey(c, "Greeting", guestBookKey(c))
+	_, err := datastore.Put(c, key, &g)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func doLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	c := appengine.NewContext(r)
 	u := user.Current(c)
@@ -42,7 +119,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusFound)
 		return
 	}
-	fmt.Fprint(w, "Hello, %v!", u)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func doLogoutHandler(w http.ResponseWriter, r *http.Request) {
@@ -59,5 +136,5 @@ func doLogoutHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusFound)
 		return
 	}
-	http.Redirect(w, r, "/", 200)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
