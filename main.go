@@ -37,16 +37,16 @@ var guestBookTemplate = template.Must(template.New("book").Parse(`
 
     Author: {{.Author}} <br />
     {{with .Author}}
-    	<a href="/logout"><button>logout</button></a>
-	{{else}}
-		<a href="/login"><button>login</button></a>
-	{{end}}
+    <a href="/logout"><button>logout</button></a>
+    {{else}}
+    <a href="/login"><button>login</button></a>
+    {{end}}
   </body>
 </html>
 `))
 
 func init() {
-	http.HandleFunc("/", doRoot)
+	http.HandleFunc("/", doIndex)
 	http.HandleFunc("/sign", doSign)
 
 	http.HandleFunc("/login", doLoginHandler)
@@ -57,9 +57,13 @@ func guestBookKey(c appengine.Context) *datastore.Key {
 	return datastore.NewKey(c, "Guestbook", "defualt_guestbook", 0, nil)
 }
 
-func doRoot(w http.ResponseWriter, r *http.Request) {
+func doIndex(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
+	index(w, r, c)
+}
+
+func index(w http.ResponseWriter, _ *http.Request, c appengine.Context) {
 	q := datastore.NewQuery("Greeting").Ancestor(guestBookKey(c)).Order("-Date").Limit(10)
 	greetings := make([]Greeting, 0, 10)
 	if _, err := q.GetAll(c, &greetings); err != nil {
@@ -67,11 +71,11 @@ func doRoot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type Exec struct {
+	type exec struct {
 		Author    string
 		Greetings []Greeting
 	}
-	e := Exec{
+	e := exec{
 		Greetings: greetings,
 	}
 	if u := user.Current(c); u != nil {
