@@ -90,6 +90,11 @@ func index(w http.ResponseWriter, _ *http.Request, c appengine.Context) {
 func doSign(w http.ResponseWriter, r *http.Request) {
 
 	c := appengine.NewContext(r)
+
+	sign(w, r, c)
+}
+
+func sign(w http.ResponseWriter, r *http.Request, c appengine.Context) {
 	g := Greeting{
 		Content: r.FormValue("content"),
 		Date:    time.Now(),
@@ -110,8 +115,13 @@ func doSign(w http.ResponseWriter, r *http.Request) {
 }
 
 func doLoginHandler(w http.ResponseWriter, r *http.Request) {
-
 	c := appengine.NewContext(r)
+
+	login(w, r, c)
+}
+
+func login(w http.ResponseWriter, r *http.Request, c appengine.Context) {
+
 	u := user.Current(c)
 	if u == nil {
 		url, err := user.LoginURL(c, r.URL.String())
@@ -127,8 +137,13 @@ func doLoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func doLogoutHandler(w http.ResponseWriter, r *http.Request) {
-
 	c := appengine.NewContext(r)
+
+	logout(w, r, c)
+}
+
+func logout(w http.ResponseWriter, r *http.Request, c appengine.Context) {
+
 	u := user.Current(c)
 	if u != nil {
 		url, err := user.LogoutURL(c, r.URL.String())
