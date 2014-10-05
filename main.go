@@ -1,7 +1,6 @@
 package gaehoge
 
 import (
-	"html/template"
 	"net/http"
 	"time"
 
@@ -9,41 +8,6 @@ import (
 	"appengine/datastore"
 	"appengine/user"
 )
-
-type Greeting struct {
-	Author  string
-	Content string
-	Date    time.Time
-}
-
-var guestBookTemplate = template.Must(template.New("book").Parse(`
-<html>
-  <head>
-    <title>Go Guestbook</title>
-  </head>
-  <body>
-    {{range .Greetings}}
-      {{with .Author}}
-        <p><b>{{.}}</b> wrote:</p>
-      {{else}}
-        <p>An anonymous person wrote:</p>
-      {{end}}
-      <pre>{{.Content}}</pre>
-    {{end}}
-    <form action="/sign" method="post">
-      <div><textarea name="content" rows="3" cols="60"></textarea></div>
-      <div><input type="submit" value="Sign Guestbook"></div>
-    </form>
-
-    Author: {{.Author}} <br />
-    {{with .Author}}
-    <a href="/logout"><button>logout</button></a>
-    {{else}}
-    <a href="/login"><button>login</button></a>
-    {{end}}
-  </body>
-</html>
-`))
 
 func init() {
 	http.HandleFunc("/", doIndex)
@@ -53,17 +17,10 @@ func init() {
 	http.HandleFunc("/logout", doLogoutHandler)
 }
 
-func guestBookKey(c appengine.Context) *datastore.Key {
-	return datastore.NewKey(c, "Guestbook", "defualt_guestbook", 0, nil)
-}
-
 func doIndex(w http.ResponseWriter, r *http.Request) {
+
 	c := appengine.NewContext(r)
 
-	index(w, r, c)
-}
-
-func index(w http.ResponseWriter, _ *http.Request, c appengine.Context) {
 	q := datastore.NewQuery("Greeting").Ancestor(guestBookKey(c)).Order("-Date").Limit(10)
 	greetings := make([]Greeting, 0, 10)
 	if _, err := q.GetAll(c, &greetings); err != nil {
@@ -91,10 +48,6 @@ func doSign(w http.ResponseWriter, r *http.Request) {
 
 	c := appengine.NewContext(r)
 
-	sign(w, r, c)
-}
-
-func sign(w http.ResponseWriter, r *http.Request, c appengine.Context) {
 	g := Greeting{
 		Content: r.FormValue("content"),
 		Date:    time.Now(),
@@ -117,11 +70,6 @@ func sign(w http.ResponseWriter, r *http.Request, c appengine.Context) {
 func doLoginHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
-	login(w, r, c)
-}
-
-func login(w http.ResponseWriter, r *http.Request, c appengine.Context) {
-
 	u := user.Current(c)
 	if u == nil {
 		url, err := user.LoginURL(c, r.URL.String())
@@ -138,11 +86,6 @@ func login(w http.ResponseWriter, r *http.Request, c appengine.Context) {
 
 func doLogoutHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-
-	logout(w, r, c)
-}
-
-func logout(w http.ResponseWriter, r *http.Request, c appengine.Context) {
 
 	u := user.Current(c)
 	if u != nil {
