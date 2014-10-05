@@ -2,6 +2,8 @@
 
 [![Build Status](https://drone.io/github.com/kyokomi/gae-go-example/status.png)](https://drone.io/github.com/kyokomi/gae-go-example/latest)
 
+[![Circle CI](https://circleci.com/gh/kyokomi/gae-go-example.png?style=badge)](https://circleci.com/gh/kyokomi/gae-go-example)
+
 ============================================================
 
 公式チュートリアルやってます。
