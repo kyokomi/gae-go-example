@@ -16,20 +16,20 @@ import (
 
 func TestIndex(t *testing.T) {
 
-	// test init
-	c, err := aetest.NewContext(nil)
+	inst, err := aetest.NewInstance(nil)
 	if err != nil {
 		t.Error(err)
 	}
-	defer c.Close()
+	defer inst.Close()
 
-	req, err := http.NewRequest("GET", "/", nil)
+	req, err := inst.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Error(err)
 	}
+
 	res := httptest.NewRecorder()
 
-	index(res, req, c)
+	doIndex(res, req)
 
 	// response check
 	data, err := ioutil.ReadAll(res.Body)
@@ -47,22 +47,22 @@ func TestIndex(t *testing.T) {
 
 func TestSign(t *testing.T) {
 
-	// test init
-	c, err := aetest.NewContext(nil)
+	inst, err := aetest.NewInstance(nil)
 	if err != nil {
 		t.Error(err)
 	}
-	defer c.Close()
+	defer inst.Close()
 
 	val := url.Values{}
 	val.Set("content", "hogehoge")
-	req, err := http.NewRequest("POST", "/sign", strings.NewReader(val.Encode()))
+	req, err := inst.NewRequest("POST", "/sign", strings.NewReader(val.Encode()))
 	if err != nil {
 		t.Error(err)
 	}
+
 	res := httptest.NewRecorder()
 
-	sign(res, req, c)
+	doSign(res, req)
 
 	if res.Header().Get("Location") != "/" {
 		t.Error("bad response location URL ", res.Header().Get("Location"))
