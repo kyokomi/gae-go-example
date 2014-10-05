@@ -1,5 +1,9 @@
 # GAE/Go Example
 
+[![Build Status](https://drone.io/github.com/kyokomi/gae-go-example/status.png)](https://drone.io/github.com/kyokomi/gae-go-example/latest)
+
+============================================================
+
 公式チュートリアルやってます。
 
 ## GAE/Goチュートリアル
