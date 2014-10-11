@@ -1,4 +1,4 @@
-package gaehoge
+package models
 
 import (
 	"time"

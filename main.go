@@ -7,6 +7,9 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"appengine/user"
+
+	"example/templates"
+	"example/models"
 )
 
 func init() {
@@ -19,8 +22,8 @@ func doIndex(w http.ResponseWriter, r *http.Request) {
 
 	c := appengine.NewContext(r)
 
-	q := datastore.NewQuery("Greeting").Ancestor(GuestBookKey(c)).Order("-Date").Limit(10)
-	greetings := make([]Greeting, 0, 10)
+	q := datastore.NewQuery("Greeting").Ancestor(models.GuestBookKey(c)).Order("-Date").Limit(10)
+	greetings := make([]models.Greeting, 0, 10)
 	if _, err := q.GetAll(c, &greetings); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -28,7 +31,7 @@ func doIndex(w http.ResponseWriter, r *http.Request) {
 
 	type exec struct {
 		Author    string
-		Greetings []Greeting
+		Greetings []models.Greeting
 	}
 	e := exec{
 		Greetings: greetings,
@@ -37,7 +40,7 @@ func doIndex(w http.ResponseWriter, r *http.Request) {
 		e.Author = u.String()
 	}
 
-	if err := GuestBookTemplate.Execute(w, e); err != nil {
+	if err := templates.GuestBookTemplate.Execute(w, e); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -46,7 +49,7 @@ func doSign(w http.ResponseWriter, r *http.Request) {
 
 	c := appengine.NewContext(r)
 
-	g := Greeting{
+	g := models.Greeting{
 		Content: r.FormValue("content"),
 		Date:    time.Now(),
 	}
@@ -55,7 +58,7 @@ func doSign(w http.ResponseWriter, r *http.Request) {
 		g.Author = u.String()
 	}
 
-	key := datastore.NewIncompleteKey(c, "Greeting", GuestBookKey(c))
+	key := datastore.NewIncompleteKey(c, "Greeting", models.GuestBookKey(c))
 	_, err := datastore.Put(c, key, &g)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
