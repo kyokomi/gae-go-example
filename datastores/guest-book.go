@@ -1,9 +1,10 @@
-package gaehoge
+package datastores
 
 import (
+	"time"
+
 	"appengine"
 	"appengine/datastore"
-	"time"
 )
 
 type Greeting struct {
@@ -12,6 +13,6 @@ type Greeting struct {
 	Date    time.Time
 }
 
-func guestBookKey(c appengine.Context) *datastore.Key {
+func GuestBookKey(c appengine.Context) *datastore.Key {
 	return datastore.NewKey(c, "Guestbook", "defualt_guestbook", 0, nil)
 }

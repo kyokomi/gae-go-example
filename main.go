@@ -1,6 +1,9 @@
 package gaehoge
 
 import (
+	"datastores"
+	"templates"
+
 	"net/http"
 	"time"
 
@@ -11,18 +14,18 @@ import (
 
 func init() {
 	http.HandleFunc("/", doIndex)
-	http.HandleFunc("/sign", doSign)
 
 	http.HandleFunc("/login", doLoginHandler)
 	http.HandleFunc("/logout", doLogoutHandler)
+	http.HandleFunc("/guest-book/sign", doSign)
 }
 
 func doIndex(w http.ResponseWriter, r *http.Request) {
 
 	c := appengine.NewContext(r)
 
-	q := datastore.NewQuery("Greeting").Ancestor(guestBookKey(c)).Order("-Date").Limit(10)
-	greetings := make([]Greeting, 0, 10)
+	q := datastore.NewQuery("Greeting").Ancestor(datastores.GuestBookKey(c)).Order("-Date").Limit(10)
+	greetings := make([]datastores.Greeting, 0, 10)
 	if _, err := q.GetAll(c, &greetings); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -30,7 +33,7 @@ func doIndex(w http.ResponseWriter, r *http.Request) {
 
 	type exec struct {
 		Author    string
-		Greetings []Greeting
+		Greetings []datastores.Greeting
 	}
 	e := exec{
 		Greetings: greetings,
@@ -39,7 +42,7 @@ func doIndex(w http.ResponseWriter, r *http.Request) {
 		e.Author = u.String()
 	}
 
-	if err := guestBookTemplate.Execute(w, e); err != nil {
+	if err := templates.GuestBookTemplate.Execute(w, e); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -48,7 +51,7 @@ func doSign(w http.ResponseWriter, r *http.Request) {
 
 	c := appengine.NewContext(r)
 
-	g := Greeting{
+	g := datastores.Greeting{
 		Content: r.FormValue("content"),
 		Date:    time.Now(),
 	}
@@ -57,7 +60,7 @@ func doSign(w http.ResponseWriter, r *http.Request) {
 		g.Author = u.String()
 	}
 
-	key := datastore.NewIncompleteKey(c, "Greeting", guestBookKey(c))
+	key := datastore.NewIncompleteKey(c, "Greeting", datastores.GuestBookKey(c))
 	_, err := datastore.Put(c, key, &g)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
