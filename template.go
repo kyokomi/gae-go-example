@@ -1,4 +1,4 @@
-package templates
+package gaehoge
 
 import "html/template"
 
