@@ -25,5 +25,7 @@ func init() {
 	r.HandleFunc("/memo/{key}", controllers.MemoShow).Methods("GET")
 	r.HandleFunc("/memo/{key}", controllers.MemoRemove).Methods("DELETE")
 
+	r.HandleFunc("/mail-send/{email}", controllers.SendMail).Methods("GET")
+
 	http.Handle("/", r)
 }
