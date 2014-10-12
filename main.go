@@ -3,8 +3,9 @@ package gaehoge
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"app/controllers"
+
+	"github.com/gorilla/mux"
 )
 
 func init() {
@@ -26,5 +27,3 @@ func init() {
 
 	http.Handle("/", r)
 }
-
-

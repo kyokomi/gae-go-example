@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"app/models"
+	"net/http"
+	"time"
+
 	"appengine"
 	"appengine/datastore"
 	"appengine/user"
-	"net/http"
-	"time"
 )
 
 func GuestSign(w http.ResponseWriter, r *http.Request) {

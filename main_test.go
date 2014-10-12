@@ -1,7 +1,6 @@
 package gaehoge
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -11,20 +10,21 @@ import (
 	"net/url"
 	"strings"
 
-	"appengine/aetest"
 	"app/controllers"
-	"appengine/user"
 	"app/models"
-	"appengine"
-	"appengine/datastore"
-	"time"
 	"reflect"
+	"time"
+
+	"appengine"
+	"appengine/aetest"
+	"appengine/datastore"
+	"appengine/user"
 )
 
 type handlerTest struct {
-	in string
+	in      string
 	handler func(http.ResponseWriter, *http.Request)
-	out string
+	out     string
 }
 
 func TestIndex(t *testing.T) {
@@ -50,7 +50,7 @@ func TestIndex(t *testing.T) {
 		t.Error(err)
 	}
 	h := string(data)
-	fmt.Println("html: ", h)
+	//fmt.Println("html: ", h)
 
 	re := regexp.MustCompile("Sign Guestbook")
 	if matched := re.MatchString(h); !matched {

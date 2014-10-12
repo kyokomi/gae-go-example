@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"net/http"
-	"appengine"
 	"app/models"
-	"appengine/datastore"
 	"app/views"
+	"net/http"
+
+	"appengine"
+	"appengine/datastore"
 	"appengine/user"
 )
 

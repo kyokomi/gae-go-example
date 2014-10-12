@@ -1,13 +1,15 @@
 package controllers
 
 import (
+	"bytes"
+	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/gorilla/mux"
+
 	"appengine"
 	"appengine/memcache"
-	"github.com/gorilla/mux"
-	"fmt"
-	"bytes"
-	"time"
 )
 
 func MemoAdd(w http.ResponseWriter, r *http.Request) {
@@ -29,8 +31,8 @@ func MemoAdd(w http.ResponseWriter, r *http.Request) {
 
 	// 有効期限1分
 	item := &memcache.Item{
-		Key:   key,
-		Value: bytes.NewBufferString(value).Bytes(),
+		Key:        key,
+		Value:      bytes.NewBufferString(value).Bytes(),
 		Expiration: (time.Minute * 1),
 	}
 	if err := memcache.Add(c, item); err != nil {

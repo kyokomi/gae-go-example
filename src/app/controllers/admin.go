@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"appengine"
-	"appengine/runtime"
 	"appengine/memcache"
+	"appengine/runtime"
 )
 
 // appengin.runtime example
