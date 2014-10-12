@@ -2,68 +2,22 @@ package gaehoge
 
 import (
 	"net/http"
-	"time"
 
-	"appengine"
-	"appengine/datastore"
-	"appengine/user"
-
-	"example/templates"
-	"example/models"
+	"github.com/gorilla/mux"
+	"app/controllers"
 )
 
 func init() {
-	http.HandleFunc("/", doIndex)
+	r := mux.NewRouter()
 
-	http.HandleFunc("/guest-book/sign", doSign)
-}
+	r.HandleFunc("/", controllers.Index)
+	r.HandleFunc("/guest-book", controllers.Index)
+	r.HandleFunc("/guest-book/sign", controllers.GuestSign)
 
-func doIndex(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/admin/show-runtime", controllers.ShowRuntime)
 
-	c := appengine.NewContext(r)
+	r.HandleFunc("/user/login", controllers.LoginHandler)
+	r.HandleFunc("/user/logout", controllers.LogoutHandler)
 
-	q := datastore.NewQuery("Greeting").Ancestor(models.GuestBookKey(c)).Order("-Date").Limit(10)
-	greetings := make([]models.Greeting, 0, 10)
-	if _, err := q.GetAll(c, &greetings); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	type exec struct {
-		Author    string
-		Greetings []models.Greeting
-	}
-	e := exec{
-		Greetings: greetings,
-	}
-	if u := user.Current(c); u != nil {
-		e.Author = u.String()
-	}
-
-	if err := templates.GuestBookTemplate.Execute(w, e); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-func doSign(w http.ResponseWriter, r *http.Request) {
-
-	c := appengine.NewContext(r)
-
-	g := models.Greeting{
-		Content: r.FormValue("content"),
-		Date:    time.Now(),
-	}
-
-	if u := user.Current(c); u != nil {
-		g.Author = u.String()
-	}
-
-	key := datastore.NewIncompleteKey(c, "Greeting", models.GuestBookKey(c))
-	_, err := datastore.Put(c, key, &g)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Handle("/", r)
 }

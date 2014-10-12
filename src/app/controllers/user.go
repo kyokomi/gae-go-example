@@ -1,4 +1,4 @@
-package gaehoge
+package controllers
 
 import (
 	"net/http"
@@ -7,12 +7,7 @@ import (
 	"appengine/user"
 )
 
-func init() {
-	http.HandleFunc("/user/login", doLoginHandler)
-	http.HandleFunc("/user/logout", doLogoutHandler)
-}
-
-func doLoginHandler(w http.ResponseWriter, r *http.Request) {
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
 	u := user.Current(c)
@@ -29,7 +24,7 @@ func doLoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func doLogoutHandler(w http.ResponseWriter, r *http.Request) {
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
 	u := user.Current(c)

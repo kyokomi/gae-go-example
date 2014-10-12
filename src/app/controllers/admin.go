@@ -1,18 +1,16 @@
-package gaehoge
+package controllers
 
 import (
+	"fmt"
+
 	"net/http"
+
 	"appengine"
 	"appengine/runtime"
-	"fmt"
 )
 
-func init() {
-	http.HandleFunc("/admin/show-runtime", doShowRuntime)
-}
-
 // appengin.runtime example
-func doShowRuntime(w http.ResponseWriter, r *http.Request) {
+func ShowRuntime(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
 	stats, err := runtime.Stats(c)

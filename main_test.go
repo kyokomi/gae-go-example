@@ -12,7 +12,14 @@ import (
 	"strings"
 
 	"appengine/aetest"
+	"app/controllers"
 )
+
+type handlerTest struct {
+	in string
+	handler func(http.ResponseWriter, *http.Request)
+	out string
+}
 
 func TestIndex(t *testing.T) {
 
@@ -29,7 +36,7 @@ func TestIndex(t *testing.T) {
 
 	res := httptest.NewRecorder()
 
-	doIndex(res, req)
+	controllers.Index(res, req)
 
 	// response check
 	data, err := ioutil.ReadAll(res.Body)
@@ -62,7 +69,7 @@ func TestSign(t *testing.T) {
 
 	res := httptest.NewRecorder()
 
-	doSign(res, req)
+	controllers.GuestSign(res, req)
 
 	if res.Header().Get("Location") != "/" {
 		t.Error("bad response location URL ", res.Header().Get("Location"))
