@@ -1,4 +1,4 @@
-package gaehoge
+package app
 
 import (
 	"net/http"

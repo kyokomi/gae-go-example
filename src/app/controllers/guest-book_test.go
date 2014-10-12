@@ -1,16 +1,12 @@
-package gaehoge
+package controllers
 
 import (
-	"io/ioutil"
-	"net/http"
 	"net/http/httptest"
-	"regexp"
 	"testing"
 
 	"net/url"
 	"strings"
 
-	"app/controllers"
 	"app/models"
 	"reflect"
 	"time"
@@ -20,43 +16,6 @@ import (
 	"appengine/datastore"
 	"appengine/user"
 )
-
-type handlerTest struct {
-	in      string
-	handler func(http.ResponseWriter, *http.Request)
-	out     string
-}
-
-func TestIndex(t *testing.T) {
-
-	inst, err := aetest.NewInstance(nil)
-	if err != nil {
-		t.Error(err)
-	}
-	defer inst.Close()
-
-	req, err := inst.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Error(err)
-	}
-
-	res := httptest.NewRecorder()
-
-	controllers.Index(res, req)
-
-	// response check
-	data, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		t.Error(err)
-	}
-	h := string(data)
-	//fmt.Println("html: ", h)
-
-	re := regexp.MustCompile("Sign Guestbook")
-	if matched := re.MatchString(h); !matched {
-		t.Error("not matched")
-	}
-}
 
 func TestSign(t *testing.T) {
 	now := time.Now()
@@ -111,7 +70,7 @@ func TestSign(t *testing.T) {
 
 		resp := httptest.NewRecorder()
 		// exec request
-		controllers.GuestSign(resp, req)
+		GuestSign(resp, req)
 
 		if resp.Code != tt.code {
 			t.Errorf("Got response code %d; want %d; body:\n%s", resp.Code, tt.code, resp.Body.String())
