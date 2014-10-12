@@ -15,6 +15,7 @@ func init() {
 	r.HandleFunc("/guest-book/sign", controllers.GuestSign).Methods("POST")
 
 	r.HandleFunc("/admin/show-runtime", controllers.ShowRuntime).Methods("GET")
+	r.HandleFunc("/admin/counter", controllers.Counter).Methods("GET")
 
 	r.HandleFunc("/user/login", controllers.LoginHandler).Methods("GET")
 	r.HandleFunc("/user/logout", controllers.LogoutHandler).Methods("GET")
