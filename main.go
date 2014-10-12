@@ -19,5 +19,11 @@ func init() {
 	r.HandleFunc("/user/login", controllers.LoginHandler).Methods("GET")
 	r.HandleFunc("/user/logout", controllers.LogoutHandler).Methods("GET")
 
+	r.HandleFunc("/memo", controllers.MemoAdd).Methods("POST")
+	r.HandleFunc("/memo/{key}", controllers.MemoShow).Methods("GET")
+	r.HandleFunc("/memo/{key}", controllers.MemoRemove).Methods("DELETE")
+
 	http.Handle("/", r)
 }
+
+
