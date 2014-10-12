@@ -11,6 +11,11 @@ import (
 
 // appengin.runtime example
 func ShowRuntime(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "GET request only", http.StatusMethodNotAllowed)
+		return
+	}
+
 	c := appengine.NewContext(r)
 
 	stats, err := runtime.Stats(c)

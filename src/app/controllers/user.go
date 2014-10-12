@@ -8,6 +8,11 @@ import (
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "GET request only", http.StatusMethodNotAllowed)
+		return
+	}
+
 	c := appengine.NewContext(r)
 
 	u := user.Current(c)
@@ -25,6 +30,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "GET request only", http.StatusMethodNotAllowed)
+		return
+	}
+
 	c := appengine.NewContext(r)
 
 	u := user.Current(c)

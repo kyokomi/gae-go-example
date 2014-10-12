@@ -10,6 +10,10 @@ import (
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "GET request only", http.StatusMethodNotAllowed)
+		return
+	}
 
 	c := appengine.NewContext(r)
 

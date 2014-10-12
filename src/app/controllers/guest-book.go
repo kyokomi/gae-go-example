@@ -10,6 +10,10 @@ import (
 )
 
 func GuestSign(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "POST request only", http.StatusMethodNotAllowed)
+		return
+	}
 
 	c := appengine.NewContext(r)
 
@@ -29,5 +33,5 @@ func GuestSign(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
