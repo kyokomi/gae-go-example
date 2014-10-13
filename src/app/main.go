@@ -31,6 +31,7 @@ func init() {
 	r.HandleFunc("/task/sign", controllers.TaskAddMemo).Methods("GET")
 	r.HandleFunc("/task/sign/{name}", controllers.TaskRemove).Methods("DELETE")
 	r.HandleFunc("/task/auto-sign", controllers.TaskBackend).Methods("POST")
+	r.HandleFunc("/task/delay", controllers.DelayFunc).Methods("GET")
 
 	http.Handle("/", r)
 }
