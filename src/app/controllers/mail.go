@@ -47,17 +47,3 @@ func ReceiveMail(_ http.ResponseWriter, r *http.Request) {
 
 	c.Infof("Received mail: \n%s", b.String())
 }
-
-func ReceiveTestMail(_ http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-
-	defer r.Body.Close()
-
-	var b bytes.Buffer
-	if _, err := b.ReadFrom(r.Body); err != nil {
-		c.Errorf("Error reading body: %v", err)
-		return
-	}
-
-	c.Infof("Test Received mail: \n%s", b.String())
-}
