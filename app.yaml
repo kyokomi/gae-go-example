@@ -3,6 +3,9 @@ version: 2
 runtime: go
 api_version: go1
 
+inbound_services:
+- mail
+
 handlers:
 - url: /.*
   script: _go_app

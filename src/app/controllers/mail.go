@@ -5,6 +5,7 @@ import (
 	"appengine"
 	"appengine/mail"
 	"github.com/gorilla/mux"
+	"bytes"
 )
 
 func SendMail(w http.ResponseWriter, r *http.Request) {
@@ -31,4 +32,32 @@ func SendMail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func ReceiveMail(_ http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+
+	defer r.Body.Close()
+
+	var b bytes.Buffer
+	if _, err := b.ReadFrom(r.Body); err != nil {
+		c.Errorf("Error reading body: %v", err)
+		return
+	}
+
+	c.Infof("Received mail: \n%s", b.String())
+}
+
+func ReceiveTestMail(_ http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+
+	defer r.Body.Close()
+
+	var b bytes.Buffer
+	if _, err := b.ReadFrom(r.Body); err != nil {
+		c.Errorf("Error reading body: %v", err)
+		return
+	}
+
+	c.Infof("Test Received mail: \n%s", b.String())
 }
