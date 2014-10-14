@@ -25,6 +25,18 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if us, err := user.CurrentOAuth(c, ""); err != nil {
+		c.Debugf(err.Error())
+	} else {
+		c.Debugf("OAuthUser: %v", us)
+	}
+
+	if key, err := user.OAuthConsumerKey(c); err != nil {
+		c.Debugf(err.Error())
+	} else {
+		c.Debugf("key: %s", key)
+	}
+
 	type exec struct {
 		Author    string
 		Greetings []models.Greeting
