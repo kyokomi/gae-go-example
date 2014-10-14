@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"net/http"
-	"appengine/delay"
-	"appengine"
 	"fmt"
+	"net/http"
+
+	"appengine"
+	"appengine/delay"
 )
 
 func DelayFunc(w http.ResponseWriter, r *http.Request) {

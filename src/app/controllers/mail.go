@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"bytes"
 	"net/http"
+
+	"github.com/gorilla/mux"
+
 	"appengine"
 	"appengine/mail"
-	"github.com/gorilla/mux"
-	"bytes"
 )
 
 func SendMail(w http.ResponseWriter, r *http.Request) {
@@ -16,15 +18,15 @@ func SendMail(w http.ResponseWriter, r *http.Request) {
 
 	m := &mail.Message{
 		Sender: "kyokomi-dev<organic-victory-708@appspot.gserviceaccount.com>",
-//		ReplyTo: "",
+		//		ReplyTo: "",
 		To: []string{address},
-//		Cc: "",
-//		Bcc: []string{},
-		Subject: "Test Mail",
-		Body:    "サンプルメールを送信。",
+		//		Cc: "",
+		//		Bcc: []string{},
+		Subject:  "Test Mail",
+		Body:     "サンプルメールを送信。",
 		HTMLBody: "",
-//		Attachments: []Attachment{},
-//		Headers: mail.Header{},
+		//		Attachments: []Attachment{},
+		//		Headers: mail.Header{},
 	}
 
 	if err := mail.Send(c, m); err != nil {

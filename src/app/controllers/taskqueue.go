@@ -1,17 +1,18 @@
 package controllers
 
 import (
+	"app/models"
+	"fmt"
 	"net/http"
-	"appengine/taskqueue"
 	"net/url"
+	"time"
+
+	"github.com/gorilla/mux"
+
 	"appengine"
 	"appengine/datastore"
-	"app/models"
-	"time"
-	"fmt"
-	"github.com/gorilla/mux"
+	"appengine/taskqueue"
 )
-
 
 func TaskAddMemo(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
@@ -22,7 +23,7 @@ func TaskAddMemo(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < 1; i++ {
 		t := taskqueue.NewPOSTTask("/task/auto-sign", param)
 		// 2秒後に実行
-		t.Delay = time.Second*2
+		t.Delay = time.Second * 2
 		if _, err := taskqueue.Add(c, t, "test"); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
