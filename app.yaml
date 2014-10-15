@@ -5,7 +5,10 @@ api_version: go1
 
 inbound_services:
 - mail
+- xmpp_message
+- xmpp_error
 
 handlers:
 - url: /.*
   script: _go_app
+

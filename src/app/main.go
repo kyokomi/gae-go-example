@@ -6,6 +6,7 @@ import (
 	"app/controllers"
 
 	"github.com/gorilla/mux"
+	"appengine/xmpp"
 )
 
 func init() {
@@ -33,5 +34,9 @@ func init() {
 	r.HandleFunc("/task/auto-sign", controllers.TaskBackend).Methods("POST")
 	r.HandleFunc("/task/delay", controllers.DelayFunc).Methods("GET")
 
+	r.HandleFunc("/xmpp/send", controllers.SendXMPP).Methods("GET")
+
 	http.Handle("/", r)
+
+	xmpp.Handle(controllers.ReceiveXMPP)
 }
