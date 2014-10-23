@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"appengine/xmpp"
-	"appengine"
-	"net/http"
 	"fmt"
+	"net/http"
+
+	"appengine"
+	"appengine/xmpp"
 )
 
 func SendXMPP(w http.ResponseWriter, r *http.Request) {
