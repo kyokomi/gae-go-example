@@ -41,6 +41,10 @@ func init() {
 
 	r.HandleFunc("/capabilities", controllers.Capabilities).Methods("GET")
 
+	r.HandleFunc("/blob", controllers.BlobPage).Methods("GET")
+	r.HandleFunc("/blob/upload", controllers.BlobUpload).Methods("POST")
+	r.HandleFunc("/blob/store", controllers.BlobStore).Methods("GET")
+
 	http.Handle("/", r)
 
 	xmpp.Handle(controllers.ReceiveXMPP)
