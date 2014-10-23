@@ -39,6 +39,8 @@ func init() {
 
 	r.HandleFunc("/fetch/github/{user}", controllers.GitHubFetch).Methods("GET")
 
+	r.HandleFunc("/capabilities", controllers.Capabilities).Methods("GET")
+
 	http.Handle("/", r)
 
 	xmpp.Handle(controllers.ReceiveXMPP)
